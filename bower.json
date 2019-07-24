@@ -1,0 +1,13 @@
+{
+  "name": "socketiochat",
+  "description": "",
+  "main": "",
+  "authors": [
+    "kürşat burak farız <kburakfariz@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/kburakf/chat-project",
+  "dependencies": {
+    "angular": "^1.7.8"
+  }
+}
