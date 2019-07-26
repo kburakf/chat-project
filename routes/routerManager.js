@@ -1,9 +1,13 @@
-const auth = require("./auth")
-const users = require("./users")
 const index = require("./index")
+const auth = require("./auth")
+const chat = require("./chat")
 
-module.exports = app =>{
-    app.use("/auth",auth)
-    app.use("/users",users)
+// middlewares
+const isAuthenticated = require("../middleware/isAuthenticated")
+
+module.exports = app => {
     app.use("/",index)
+    app.use("/auth", auth)
+    app.use("/chat",isAuthenticated,chat)
+
 }

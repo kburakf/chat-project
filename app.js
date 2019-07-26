@@ -3,14 +3,14 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const passport = require("passport")
+const session = require("express-session")
 const dotenv = require("dotenv")
 dotenv.config()
 
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
-
 const app = express();
 
+// database
 const db = require("./database/db")()
 
 // view engine setup
@@ -26,6 +26,21 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'bower_components')));
 
+//express-session
+app.use(session({
+  secret: process.env.SESSION_SECRET_KEY,
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 14 * 24 * 3600000
+  }
+}))
+
+//passport.js
+app.use(passport.initialize())
+app.use(passport.session())
+
+//router manager
 require("./routes/routerManager")(app)
 
 
