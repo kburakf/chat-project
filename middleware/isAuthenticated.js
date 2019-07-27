@@ -1,8 +1,8 @@
-isAuthenticated = (req, res, next) => {
-    if (req.isAuthenticated())
-        next()
-    else
-        res.redirect("/")
+function isAuthenticated(req, res, next){
+	if (req.isAuthenticated())
+		next();
+	else
+		res.redirect('/');
 }
 
-module.exports = isAuthenticated
+module.exports = isAuthenticated;

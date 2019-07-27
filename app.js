@@ -1,17 +1,23 @@
-const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
-const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const passport = require("passport")
-const session = require("express-session")
-const dotenv = require("dotenv")
-dotenv.config()
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const session = require('express-session');
+const passport = require('passport');
+const redisStore = require('./database/redisStore');
+
+const dotenv = require('dotenv');
+dotenv.config();
+
 
 const app = express();
 
 // database
 const db = require("./database/db")()
+
+// middlewares
+const isAuthenticated = require('./middleware/isAuthenticated');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -28,6 +34,7 @@ app.use(express.static(path.join(__dirname, 'bower_components')));
 
 //express-session
 app.use(session({
+  store: redisStore,
   secret: process.env.SESSION_SECRET_KEY,
   resave: false,
   saveUninitialized: true,

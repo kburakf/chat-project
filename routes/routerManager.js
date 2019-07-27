@@ -9,5 +9,4 @@ module.exports = app => {
     app.use("/",index)
     app.use("/auth", auth)
     app.use("/chat",isAuthenticated,chat)
-
 }
