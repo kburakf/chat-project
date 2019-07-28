@@ -1,3 +1,4 @@
+const shortid = require("shortid")
 const redisClient = require("../redisClient")
 
 function Rooms() {
@@ -6,13 +7,14 @@ function Rooms() {
 
 module.exports = new Rooms()
 
-Rooms.prototype.upsert = roomName => {
+Rooms.prototype.upsert = function (name) {
+    const newId = shortid.generate()
     this.client.hset(
         "rooms",
-        roomName,
+        "@Room: " + newId,
         JSON.stringify({
-            connectionId,
-            roomName,
+            id: "@Room: " + newId,
+            name,
             when: Date.now()
         }),
         err => {
@@ -23,18 +25,15 @@ Rooms.prototype.upsert = roomName => {
 }
 
 Rooms.prototype.list = function (callback) {
-	let roomList = [];
+    let roomList = [];
 
-	this.client.hgetall('rooms', function (err, users) {
-		if (err) {
-		  console.error(err);
-		  return callback([]);
-		}
-        /*
-		for (let room in rooms){
-			active.push(JSON.parse(rooms[room]));
-		} */
-
-		return callback(roomList);
-	})
+    this.client.hgetall('rooms', function (err, rooms) {
+        if (err) {
+            console.error(err);
+            return callback([]);
+        }
+        for (let room in rooms)
+            roomList.push(JSON.parse(rooms[room]));
+        return callback(roomList);
+    })
 };

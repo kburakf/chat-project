@@ -7,6 +7,7 @@ socketApi.io = io
 // libs
 const Users = require("./lib/Users")
 const Rooms = require("./lib/Rooms")
+const Messages = require("./lib/Messages")
 
 io.use(socketAuthorization);
 
@@ -20,18 +21,28 @@ io.adapter(redisAdapter({
 
 io.on("connection", socket => {
 	console.log("girdi : " + socket.request.user.name)
-	
+
+	Rooms.list(rooms => {
+		io.emit("roomList", rooms)
+	})
+
 	Users.upsert(socket.id, socket.request.user)
 
 	Users.list(users => {
-		io.emit("onlineList",users)
+		io.emit("onlineList", users)
 	})
 
-	/*Rooms.list(rooms => {
-		io.emit("roomList", rooms)
-	}) */
+	socket.on("newMessage", data => {
+		const messageData = {
+			...data,
+			userId: socket.request.user._id,
+			username: socket.request.user.name,
+			surname: socket.request.user.surname
+		}
+		Messages.upsert(messageData)
+		socket.broadcast.emit("receiveMessage", messageData)
+	})
 
-	
 	socket.on("newRoom", roomName => {
 		Rooms.upsert(roomName)
 		Rooms.list(rooms => {
@@ -40,7 +51,7 @@ io.on("connection", socket => {
 	})
 
 	socket.on("disconnect", () => {
-		Users.remove(socket.request.user.googleId)
+		Users.remove(socket.request.user._id)
 
 		Users.list(users => {
 			io.emit("onlineList", users)
