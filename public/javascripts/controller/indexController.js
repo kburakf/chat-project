@@ -1,3 +1,6 @@
-app.controller('indexController', ['$scope', ($scope) => {
-	console.log('selam');
-}]);
+app.controller("indexController", [
+  "$scope",
+  $scope => {
+    console.log("selam");
+  }
+]);
